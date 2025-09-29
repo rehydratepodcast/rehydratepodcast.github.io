@@ -3,11 +3,12 @@ name: publish
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:   # ✅ allows manual runs from the Actions tab
 
 permissions:
-  contents: read        # needed to checkout code
-  pages: write          # needed to deploy to Pages
-  id-token: write       # needed by deploy-pages
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -20,7 +21,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'    # update as needed
+          node-version: '20'  # adjust if needed
 
       - name: Install dependencies
         run: npm ci
@@ -32,7 +33,7 @@ jobs:
       - name: Upload build output
         uses: actions/upload-pages-artifact@v3
         with:
-          path: rehydrate       # matches the --output folder above
+          path: rehydrate
 
   deploy:
     needs: build
