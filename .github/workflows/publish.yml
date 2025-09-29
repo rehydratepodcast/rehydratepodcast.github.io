@@ -1,45 +1,46 @@
-# This is a basic workflow to help you get started with Actions
-
 name: publish
 
-# Controls when the action will run.
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-   push:
-     branches: [ main ]
+  push:
+    branches: [ main ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+permissions:
+  contents: read        # needed to checkout code
+  pages: write          # needed to deploy to Pages
+  id-token: write       # needed by deploy-pages
+
 jobs:
-  # This workflow contains a single job called "sync"
-  sync:
-    environment: Publish
-    # The type of runner that the job will run on
+  build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [12.x]
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - name: Build site
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'    # update as needed
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Eleventy site
         run: |
-            npm install
-            npx @11ty/eleventy --config=eleventy-config.js --output=rehydrate
-      # Runs a single command using the runners shell
-      - name: s3cmd for GitHub Actions
-        uses: ThiagoAnunciacao/s3cmd-sync-action@v0.2.4
-        env:
-          AWS_ACCESS_KEY_ID: ${{secrets.s3_access_key}}
-          AWS_SECRET_ACCESS_KEY: ${{secrets.s3_secret_key}}
-          AWS_S3_BUCKET: ${{secrets.s3_bucket}}
-          S3CMD_EXTRA_OPTS: --host=${{secrets.s3_host}} --host-bucket={{s3.host_bucket}} --acl-public
-          S3CMD_SOURCE_DIR: rehydrate
-          S3CMD_DELETE_REMOVED: false
-      # Runs a set of commands using the runners shell
-      #- name: Run a multi-line script
-      #  run: |
-      #    echo Add other actions to build,
-      #    echo test, and deploy your project.
+          npx @11ty/eleventy --config=eleventy-config.js --output=rehydrate
+
+      - name: Upload build output
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: rehydrate       # matches the --output folder above
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
