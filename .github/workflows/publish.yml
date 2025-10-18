@@ -32,6 +32,7 @@ jobs:
               --endpoint-url https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com \
               --exclude "*" \
               --include "*.mp3" \
+              --size-only \
               --delete
           else
             echo "No episode-media directory found, skipping upload."
