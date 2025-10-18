@@ -8,23 +8,17 @@ routes = [
   { pattern = "rehydratepodcast-github-io.pages.dev/*", zone_name = "rehydratepodcast-github-io.pages.dev" }
 ]
 
-# Use your Cloudflare Pages site as a service binding (for normal HTML requests)
-services = [
-  { binding = "ASSETS", service = "rehydratepodcast-github-io" }
-]
-
 # Bind your R2 bucket
 [[r2_buckets]]
 binding = "PODCAST_BUCKET"
 bucket_name = "rehydratepodcast"
 
-# Optional: Environment variables (if you need future configs)
+# Optional: Environment variables
 [vars]
 CACHE_MAX_AGE = "3600"
 
-# Enable dev mode to test locally
+# Dev mode
 [dev]
 ip = "127.0.0.1"
 port = 8787
 local_protocol = "http"
-assets = "_site"
