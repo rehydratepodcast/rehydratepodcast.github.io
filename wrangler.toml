@@ -1,23 +1,19 @@
-name = "rehydrate-worker"
-main = "worker.js"
+name = "rehydrate-site"
 compatibility_date = "2025-10-18"
+
+# Required for Pages
 pages_build_output_dir = "_site"
 
-# Route all requests to the Worker
-routes = [
-  { pattern = "rehydratepodcast-github-io.pages.dev/*", zone_name = "rehydratepodcast-github-io.pages.dev" }
-]
+# Environment variables (optional)
+[vars]
+CACHE_MAX_AGE = "3600"
 
 # Bind your R2 bucket
 [[r2_buckets]]
 binding = "PODCAST_BUCKET"
 bucket_name = "rehydratepodcast"
 
-# Optional: Environment variables
-[vars]
-CACHE_MAX_AGE = "3600"
-
-# Dev mode
+# Local dev (optional)
 [dev]
 ip = "127.0.0.1"
 port = 8787
