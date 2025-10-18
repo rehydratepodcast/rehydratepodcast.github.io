@@ -1,6 +1,7 @@
 name = "rehydrate-worker"
 main = "worker.js"
 compatibility_date = "2025-10-18"
+pages_build_output_dir = "_site"
 
 # Route all requests to the Worker
 routes = [
