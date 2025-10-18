@@ -15,7 +15,7 @@
 		class="episode-player"
 		controls=""
 		preload="metadata"
-		src="/episodes/{{ src | getEpisodeFilename }}"
+		src="{{ src | getEpisodeFilename | getEpisodeMediaUrl }}"
 	></audio>
 	{% include 'findings.njk' %}
 	<div class="time-stamp entry-meta">
@@ -34,7 +34,7 @@
 						controls=""
 						loop="false"
 						preload="metadata"
-						src="/episodes/{{ extra.episodeFilename }}"
+						src="{{ extra.episodeFilename | getEpisodeMediaUrl }}"
 					></audio>
 					{% include 'bonus-findings.njk' %}
 				</div>
