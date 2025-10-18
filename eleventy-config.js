@@ -31,10 +31,7 @@ module.exports = function (eleventyConfig) {
 	});
 
   // Redirects file so we can keep the same URL
-  module.exports = function(eleventyConfig) {
-    eleventyConfig.addPassthroughCopy("_redirects");
-  };
-
+  eleventyConfig.addPassthroughCopy("_redirects");
 	eleventyConfig.addPassthroughCopy('media/*');
 	eleventyConfig.addPassthroughCopy('app.scss');
 	// eleventyConfig.addPassthroughCopy('episodes/**/*.mp3');
@@ -250,7 +247,7 @@ function getEpisodeFilename(episode) {
 }
 
 function getEpisodeMediaUrl(episodeFilename) {
-  return `https://media.rehydrate.space/${episodeFilename}`
+  return `https://rehydrate.space/episodes/${episodeFilename}`
 }
 
 function getEpisodeTweetSummary(episode, rl) {
