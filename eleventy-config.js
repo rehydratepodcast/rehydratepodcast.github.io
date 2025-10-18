@@ -32,7 +32,7 @@ module.exports = function (eleventyConfig) {
 
 	eleventyConfig.addPassthroughCopy('media/*');
 	eleventyConfig.addPassthroughCopy('app.scss');
-	eleventyConfig.addPassthroughCopy('episodes/**/*.mp3');
+	// eleventyConfig.addPassthroughCopy('episodes/**/*.mp3');
 
 	eleventyConfig.addCollection('episodes',
 		curry(addFilteredCollection)(['episodes/*.njk'], compareDatesDesc, null)
@@ -64,7 +64,8 @@ module.exports = function (eleventyConfig) {
 	eleventyConfig.addFilter('rfc822Date', rfc822Date);
 	eleventyConfig.addFilter('findEpisode', findEpisode);
 	eleventyConfig.addFilter('getEpisodeFilename', getEpisodeFilename);
-	eleventyConfig.addFilter('getEpisodeTweetSummary', getEpisodeTweetSummary);
+  eleventyConfig.addFilter('getEpisodeMediaUrl', getEpisodeMediaUrl);
+  eleventyConfig.addFilter('getEpisodeTweetSummary', getEpisodeTweetSummary);
 	eleventyConfig.addFilter('getEpisodeLink', getEpisodeLink);
 };
 
@@ -233,7 +234,7 @@ function getEpisodeFilename(episode) {
 	if (episode.season) {
 		parts.push(`s${episode.season}`)
 	}
-	if (episode.number == 0 || episode.number) {
+	if (episode.number === 0 || episode.number) {
 		parts.push(`ep${episode.number}`)
 	}
 	if (episode.slug) {
@@ -241,6 +242,10 @@ function getEpisodeFilename(episode) {
 	}
 
 	return `${parts.join('-')}.mp3`
+}
+
+function getEpisodeMediaUrl(episodeFilename) {
+  return `https://media.rehydrate.space/${episodeFilename}`
 }
 
 function getEpisodeTweetSummary(episode, rl) {
