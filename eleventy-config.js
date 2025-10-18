@@ -245,7 +245,6 @@ function getEpisodeFilename(episode) {
 }
 
 function getEpisodeMediaUrl(episodeFilename) {
-  console.log(episodeFilename)
   return `https://media.rehydrate.space/${episodeFilename}`
 }
 
