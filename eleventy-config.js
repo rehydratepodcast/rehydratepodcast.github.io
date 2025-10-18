@@ -31,10 +31,8 @@ module.exports = function (eleventyConfig) {
 	});
 
   // Redirects file so we can keep the same URL
-  eleventyConfig.addPassthroughCopy("_redirects");
 	eleventyConfig.addPassthroughCopy('media/*');
 	eleventyConfig.addPassthroughCopy('app.scss');
-	// eleventyConfig.addPassthroughCopy('episodes/**/*.mp3');
 
 	eleventyConfig.addCollection('episodes',
 		curry(addFilteredCollection)(['episodes/*.njk'], compareDatesDesc, null)

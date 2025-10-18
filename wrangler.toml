@@ -1,5 +1,5 @@
 name = "rehydrate-worker"
-main = "functions/worker.js"
+main = "worker.js"
 compatibility_date = "2025-10-18"
 
 # Route all requests to the Worker
