@@ -17,6 +17,18 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Sync episode-media to Cloudflare R2
+        run: |
+          sudo apt-get update && sudo apt-get install -y awscli
+          aws s3 sync ./episode-media s3://${{ secrets.R2_BUCKET }} \
+            --endpoint-url https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com \
+            --exclude "*" \
+            --include "*.mp3" \
+            --delete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
