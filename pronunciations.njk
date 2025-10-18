@@ -15,7 +15,7 @@ pageHeading: Pronunciations List
             class="bonus episode-player"
             controls=""
             preload="metadata"
-            src="/episodes/pronunciations/{{ name.audio }}"
+            src="{{ ('pronunciations/' ~ name.audio) | getEpisodeMediaUrl }}"
           ></audio>
         </li>
     </ul>

@@ -43,7 +43,7 @@
   controls=""
   loop="false"
   preload="metadata"
-  src="/episodes/{{ src | getEpisodeFilename }}"
+  src="{{ src | getEpisodeFilename | getEpisodeMediaUrl }}"
 ></audio>
 
 <!-- Bonus Content -->
