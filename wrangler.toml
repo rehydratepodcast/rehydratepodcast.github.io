@@ -1,0 +1,29 @@
+name = "rehydrate-worker"
+main = "functions/worker.js"
+compatibility_date = "2025-10-18"
+
+# Route all requests to the Worker
+routes = [
+  { pattern = "rehydratepodcast-github-io.pages.dev/*", zone_name = "rehydratepodcast-github-io.pages.dev" }
+]
+
+# Use your Cloudflare Pages site as a service binding (for normal HTML requests)
+services = [
+  { binding = "ASSETS", service = "rehydratepodcast-github-io" }
+]
+
+# Bind your R2 bucket
+[[r2_buckets]]
+binding = "PODCAST_BUCKET"
+bucket_name = "rehydratepodcast"
+
+# Optional: Environment variables (if you need future configs)
+[vars]
+CACHE_MAX_AGE = "3600"
+
+# Enable dev mode to test locally
+[dev]
+ip = "127.0.0.1"
+port = 8787
+local_protocol = "http"
+assets = "_site"
