@@ -54,7 +54,7 @@ metadata:
     {%- for episode in collections.external_episodes -%}
       {%- set src = episode.data.stuff -%}
       {%- set filename = episode.data.stuff | getEpisodeFilename -%}
-      {%- set fileURL -%}{{ filename | getEpisodeMediaUrl }}{%- endset -%}
+      {%- set fileURL -%}{{ metadata.url }}{{ filename | getEpisodeMediaUrl }}{%- endset -%}
       {%- set pageURL -%}{{ metadata.url }}/episodes/{{ src.slug }}{%- endset -%}
       {%- set filePath -%}episode-media/{{ filename }}{%- endset -%}
       {%- set imageURL -%}{{ metadata.url }}/media/{{ src.imageFilename }}{%- endset -%}
@@ -84,7 +84,7 @@ metadata:
       {%- if src.extras and src.extras.length != 0 -%}
         {%- for extra in src.extras -%}
           {%- set title -%}{{ extra.title }}: {{ src | getEpisodeTitle }}{%- endset -%}
-          {%- set fileURL -%}{{ extra.episodeFilename | getEpisodeMediaUrl }}{%- endset -%}
+          {%- set fileURL -%}{{ metadata.url }}{{ extra.episodeFilename | getEpisodeMediaUrl }}{%- endset -%}
           {%- set filePath -%}episode-media/{{ extra.episodeFilename }}{%- endset -%}
           {%- set imageURL -%}{{ metadata.url }}/media/{{ extra.imageFilename }}{%- endset -%}
           <item>
