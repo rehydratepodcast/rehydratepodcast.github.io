@@ -5,6 +5,11 @@ export async function onRequest(context) {
   // Get object key relative to R2
   const objectKey = url.pathname.replace(/^\/episodes\//, "");
 
+  if (!objectKey) {
+    console.error("Empty object key from URL:", url.pathname);
+    return new Response("Invalid request", { status: 400 });
+  }
+
   // Only handle MP3s
   if (!objectKey.endsWith(".mp3")) {
     return context.next(); // fallback to Pages site
@@ -16,35 +21,34 @@ export async function onRequest(context) {
   const headers = new Headers();
 
   try {
+    // Fetch object from R2
+    object = await env.PODCAST_BUCKET.get(objectKey);
+    if (!object) {
+      console.warn("MP3 not found in R2:", objectKey);
+      return new Response("MP3 not found in R2", { status: 404 });
+    }
+
+    const objectSize = object.size ?? (await env.PODCAST_BUCKET.head(objectKey)).size;
+
     if (rangeHeader) {
       // Parse "bytes=start-end"
       const matches = rangeHeader.match(/bytes=(\d*)-(\d*)/);
       if (matches) {
         const start = matches[1] ? parseInt(matches[1], 10) : 0;
-        const end = matches[2] ? parseInt(matches[2], 10) : undefined;
+        const end = matches[2] ? parseInt(matches[2], 10) : objectSize - 1;
 
-        // Fetch range from R2
+        // Fetch only the requested range
         object = await env.PODCAST_BUCKET.get(objectKey, {
-          range: end !== undefined ? `bytes=${start}-${end}` : `bytes=${start}-`,
+          range: `bytes=${start}-${end}`,
         });
 
-        if (!object) throw new Error("Not found");
-
-        const objectSize = object.size ?? 0;
-        status = 206; // Partial content
-        headers.set(
-          "Content-Range",
-          `bytes ${start}-${end ?? objectSize - 1}/${objectSize}`
-        );
-      } else {
-        object = await env.PODCAST_BUCKET.get(objectKey);
+        status = 206; // Partial Content
+        headers.set("Content-Range", `bytes ${start}-${end}/${objectSize}`);
+        headers.set("Accept-Ranges", "bytes");
       }
     } else {
-      // Full file if no range requested
-      object = await env.PODCAST_BUCKET.get(objectKey);
+      headers.set("Accept-Ranges", "bytes");
     }
-
-    if (!object) return new Response("MP3 not found in R2", { status: 404 });
 
     // Standard headers
     object.writeHttpMetadata(headers);
@@ -54,6 +58,7 @@ export async function onRequest(context) {
 
     return new Response(object.body, { headers, status });
   } catch (err) {
-    return new Response("Error fetching MP3", { status: 500 });
+    console.error("Error fetching MP3:", objectKey, err);
+    return new Response("Internal Server Error", { status: 500 });
   }
 }
