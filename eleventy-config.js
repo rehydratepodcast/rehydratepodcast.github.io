@@ -245,7 +245,7 @@ function getEpisodeFilename(episode) {
 }
 
 function getEpisodeMediaUrl(episodeFilename) {
-  return `https://rehydrate.space/episodes/${episodeFilename}`
+  return `/episodes/${episodeFilename}`
 }
 
 function getEpisodeTweetSummary(episode, rl) {
