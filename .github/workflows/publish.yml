@@ -7,11 +7,9 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 jobs:
-  build:
+  sync-media:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -22,49 +20,15 @@ jobs:
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
           unzip -q awscliv2.zip
           sudo ./aws/install --update
-          aws --version
 
       - name: Sync episode-media to Cloudflare R2
         run: |
-          if [ -d "./episode-media" ]; then
-            echo "Syncing episode-media to Cloudflare R2..."
-            aws s3 sync ./episode-media s3://${{ secrets.R2_BUCKET }} \
-              --endpoint-url https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com \
-              --exclude "*" \
-              --include "*.mp3" \
-              --size-only \
-              --delete
-          else
-            echo "No episode-media directory found, skipping upload."
-          fi
+          aws s3 sync ./episode-media s3://${{ secrets.R2_BUCKET }} \
+            --endpoint-url https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com \
+            --exclude "*" \
+            --include "*.mp3" \
+            --size-only \
+            --delete
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Eleventy site
-        # ➜ no --output override; builds into _site
-        run: npx @11ty/eleventy --config=eleventy-config.js
-
-      - name: Upload build output
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site     # default Eleventy output directory
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
