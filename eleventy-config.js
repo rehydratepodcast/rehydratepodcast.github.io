@@ -40,11 +40,6 @@ module.exports = function (eleventyConfig) {
 
 	eleventyConfig.addCollection('external_episodes',
 		curry(addFilteredCollection)(['episodes/*.njk'], compareDatesDesc, (episode) => {
-			// Filter out the episode if any of the hosts are in the exclusion list
-			// console.log(episode.data.stuff.hosts)
-			if (!episode.data.stuff.hosts) {
-				console.log(episode.data.stuff.title)
-			}
 			return episode.data.stuff && !hostsExcludeExternal.some(excludedHost => episode.data.stuff.hosts.includes(excludedHost))
 		})
 	);
@@ -83,7 +78,6 @@ function getEpisodeLink(episode, readingListEntry, useSummary) {
 
 		let url = episode.page.url;
 		if (useSummary && stuff.episodeSummary) {
-			console.log(stuff.episodeSummary)
 			url = stuff.episodeSummary
 		}
 
@@ -138,7 +132,6 @@ function addFilteredCollection(glob, sortFn, filterFn, collection) {
 		.filter(currentEpisodes);
 
 	if (filterFn) {
-		console.log(filterFn)
 		filteredCollection = filteredCollection.filter(filterFn)
 	}
 

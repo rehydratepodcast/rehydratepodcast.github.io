@@ -1,5 +1,3 @@
-include config.mk
-
 HOMEDIR = $(shell pwd)
 
 build: images
@@ -15,12 +13,6 @@ serve: images
 		--output=rehydrate \
 		--config=eleventy-config.js \
 		--serve
-
-pushall: sync
-	git push origin main
-
-sync:
-	s3cmd sync --acl-public rehydrate/ s3://$(BUCKET)/$(APPDIR)/
 
 prettier:
 	prettier --single-quote --write "**/*.js"

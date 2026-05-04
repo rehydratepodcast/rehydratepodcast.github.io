@@ -1,0 +1,64 @@
+{%- for episode in episodeCollection -%}
+  {%- set src = episode.data.stuff -%}
+  {%- set filename = episode.data.stuff | getEpisodeFilename -%}
+  {%- set fileURL -%}{{ metadata.url }}{{ filename | getEpisodeMediaUrl }}{%- endset -%}
+  {%- set pageURL -%}{{ metadata.url }}/episodes/{{ src.slug }}{%- endset -%}
+  {%- set filePath -%}episode-media/{{ filename }}{%- endset -%}
+  {%- set imageURL -%}{{ metadata.url }}/media/{{ src.imageFilename }}{%- endset -%}
+  <item>
+    <title><![CDATA[{{ src | getEpisodeTitle | safe }}]]></title>
+    <itunes:title><![CDATA[{{ src | getEpisodeTitle | safe }}]]></itunes:title>
+    <itunes:subtitle><![CDATA[{{ src | getReadingListEntry(readingList) | getEpisodeSubtitle | safe }}]]></itunes:subtitle>
+    <description><![CDATA[
+        <a href="{{ pageURL }}">Episode Page</a>
+        {%- include 'findings.njk' -%}
+        {%- include 'contact.njk' -%}
+    ]]></description>
+    <link href="{{ pageURL }}">{{ pageURL }}</link>
+    <guid isPermaLink="false">{{ fileURL }}</guid>
+    <dc:creator><![CDATA[{{ metadata.author.name }}]]></dc:creator>
+    <pubDate>{{ src.date | rfc822Date }}</pubDate>
+    <enclosure type="audio/mpeg" url="{{ fileURL }}" length="{{ filePath | length }}"/>
+    <itunes:summary>{{ src.summary }}</itunes:summary>
+    <itunes:author>{{ metadata.author.name }}</itunes:author>
+    <itunes:explicit>No</itunes:explicit>
+    <itunes:duration>{{ src.seconds }}</itunes:duration>
+    <itunes:image href="{{ imageURL }}"/>
+    <itunes:season>{{ src.season }}</itunes:season>
+    <itunes:episode>{{ src.number }}</itunes:episode>
+    <itunes:episodeType>full</itunes:episodeType>
+  </item>
+  {%- if src.extras and src.extras.length != 0 -%}
+    {%- for extra in src.extras -%}
+      {%- set title -%}{{ extra.title }}: {{ src | getEpisodeTitle }}{%- endset -%}
+      {%- set fileURL -%}{{ metadata.url }}{{ extra.episodeFilename | getEpisodeMediaUrl }}{%- endset -%}
+      {%- set filePath -%}episode-media/{{ extra.episodeFilename }}{%- endset -%}
+      {%- set imageURL -%}{{ metadata.url }}/media/{{ extra.imageFilename }}{%- endset -%}
+      <item>
+        <title><![CDATA[{{ title|safe }}]]></title>
+        <itunes:title><![CDATA[{{ title|safe }}]]></itunes:title>
+        <itunes:subtitle><![CDATA[{{ src | getReadingListEntry(readingList) | getEpisodeSubtitle | safe }}]]></itunes:subtitle>
+        <description><![CDATA[
+          <a href="{{ pageURL }}">Episode Page</a>
+          <br />
+          {%- include 'bonus-findings.njk' -%}
+          {%- include 'contact.njk' -%}
+        ]]>
+        </description>
+        <link href="{{ pageURL }}">{{ pageURL }}</link>
+        <guid isPermaLink="false">{{ fileURL }}</guid>
+        <dc:creator><![CDATA[{{ metadata.author.name }}]]></dc:creator>
+        <pubDate>{{ src.date | rfc822Date }}</pubDate>
+        <enclosure type="audio/mpeg" url="{{ fileURL }}" length="{{ filePath | length }}"/>
+        <itunes:summary>{{ extra.desc }}</itunes:summary>
+        <itunes:author>{{ metadata.author.name }}</itunes:author>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:duration>{{ extra.seconds }}</itunes:duration>
+        <itunes:image href="{{ imageURL }}"/>
+        <itunes:season>{{ src.season }}</itunes:season>
+        <itunes:episode>{{ src.number }}</itunes:episode>
+        <itunes:episodeType>Bonus</itunes:episodeType>
+      </item>
+    {%- endfor -%}
+  {%- endif -%}
+{%- endfor -%}
