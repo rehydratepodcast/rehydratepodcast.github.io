@@ -4,21 +4,18 @@
 {% set nextPost = collections.episodes | getNextCollectionItem(episode) %}
 {% set nextPostData = nextPost | getEpisodeLink(rl, useSummary) %}
 
-{% macro item(data) %}
+{% macro item(data, direction) %}
 	{% if data %}
-		<div class="prev-next-meta-image">
-			<a href="{{ data.url }}">
-				<img src="/media/{{ data.image }}" class="prev-next-image" alt="Episode image" />
-			</a>
-		</div>
+		<a href="{{ data.url }}">
+			<img src="/media/{{ data.image }}" class="prev-next-image" alt="Episode image" />
+		</a>
 		<div class="prev-next-meta-title">
+			<span class="prev-next-direction">{{ direction }}</span>
 			<a href="{{ data.page_url }}">
 				<span class="prev-next-title">{{ data.title }}</span>
 			</a>
-			<br />
 			<span class="prev-next-season">{{ data.seasonTitle }}</span>
 			{% if data.summary %}
-				<br />
 				<a href="{{ data.summary }}">
 					<span class="prev-next-summary">Summary</span>
 				</a>
@@ -29,12 +26,12 @@
 
 <div id="prev-next" class="pane index-pane">
 	<div id="next" class="prev-next-section">
-		{{ item(nextPostData) }}
+		{{ item(nextPostData, "← Newer") }}
 	</div>
 
 	<div id="middle" class="prev-next-section"></div>
 
 	<div id="previous" class="prev-next-section">
-		{{ item(previousPostData) }}
+		{{ item(previousPostData, "Older →") }}
 	</div>
 </div>
