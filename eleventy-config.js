@@ -187,8 +187,8 @@ function getEpisodeSubtitle(rl) {
 
 function findEpisode(episodeList, seasonNumber, episodeNumber) {
 	return episodeList.find(e => {
-		return getAtPath(e, ['data', 'stuff', 'season']) === seasonNumber
-			&& getAtPath(e, ['data', 'stuff', 'number']) === episodeNumber
+		return e?.data?.stuff?.season === seasonNumber
+			&& e?.data?.stuff?.number === episodeNumber
 	})
 }
 
